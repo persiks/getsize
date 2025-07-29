@@ -51,5 +51,6 @@ header {
     padding: 6px 12px;
     border-radius: 4px;
     font-size: 26px;
+    text-align: center;
     z-index: 2;
 }
