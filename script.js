@@ -10,7 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
         isScaling = false;
     const pointers = {};
 
-    const pxPerMm = (window.devicePixelRatio * 96) / 25.4;
+    const isIphone = /iP(hone|od|ad)/.test(navigator.userAgent);
+    const pxPerMm = isIphone ? 11.34 : (window.devicePixelRatio * 96) / 25.4;
 
     function updateTransform() {
         overlay.style.transform = `translate(-50%,-50%) translate(${posX}px,${posY}px) scale(${scale})`;
