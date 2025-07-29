@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const pointers = {};
 
     const isIphone = /iP(hone|od|ad)/.test(navigator.userAgent);
+    const calibrationFactor = 18 / 10;
     const pxPerMm = isIphone ? 11.34 : (window.devicePixelRatio * 96) / 25.4;
 
     function updateTransform() {
@@ -19,8 +20,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateMeasurement() {
         const rect = overlay.getBoundingClientRect();
-        const diamMm = rect.width / pxPerMm;
-        diamTxt.textContent = diamMm.toFixed(1);
+        const rawMm = rect.width / pxPerMm;
+        const realMm = rawMm * calibrationFactor;
+        diamTxt.textContent = realMm.toFixed(1);
     }
 
     updateTransform();
