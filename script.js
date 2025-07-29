@@ -25,15 +25,17 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTransform();
     updateMeasurement();
 
-    overlay.addEventListener('pointerdown', (e) => {
-        overlay.setPointerCapture(e.pointerId);
+    document.addEventListener('pointerdown', (e) => {
         pointers[e.pointerId] = { x: e.clientX, y: e.clientY };
 
-        if (Object.keys(pointers).length === 1) {
+        if (Object.keys(pointers).length === 1 && e.target === overlay) {
             isDragging = true;
+            overlay.setPointerCapture(e.pointerId);
             startX = e.clientX - posX;
             startY = e.clientY - posY;
-        } else if (Object.keys(pointers).length === 2) {
+        }
+
+        if (Object.keys(pointers).length === 2) {
             isScaling = true;
             const [p1, p2] = Object.values(pointers);
             startDist = Math.hypot(p2.x - p1.x, p2.y - p1.y);
@@ -41,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    overlay.addEventListener('pointermove', (e) => {
+    document.addEventListener('pointermove', (e) => {
         if (!pointers[e.pointerId]) return;
         pointers[e.pointerId].x = e.clientX;
         pointers[e.pointerId].y = e.clientY;
@@ -58,17 +60,23 @@ document.addEventListener('DOMContentLoaded', () => {
         updateMeasurement();
     });
 
-    overlay.addEventListener('pointerup', (e) => {
-        overlay.releasePointerCapture(e.pointerId);
+    document.addEventListener('pointerup', (e) => {
+        if (e.target === overlay) {
+            overlay.releasePointerCapture(e.pointerId);
+        }
         delete pointers[e.pointerId];
         if (Object.keys(pointers).length < 2) isScaling = false;
         if (Object.keys(pointers).length === 0) isDragging = false;
     });
 
-    overlay.addEventListener('wheel', (e) => {
-        e.preventDefault();
-        scale *= 1 - e.deltaY * 0.001;
-        updateTransform();
-        updateMeasurement();
-    });
+    document.addEventListener(
+        'wheel',
+        (e) => {
+            e.preventDefault();
+            scale *= 1 - e.deltaY * 0.001;
+            updateTransform();
+            updateMeasurement();
+        },
+        { passive: false }
+    );
 });
